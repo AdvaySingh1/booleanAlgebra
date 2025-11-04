@@ -151,7 +151,7 @@ int main() {
   std::cout << "Parsing" << std::endl;
   size_t numCubes(0);
   std::cin >> numVars >> numCubes;
-  cubeList_t cubes(numCubes, cube_t(numVars, cubeVar_t::A));
+  cubeList_t cubeList(numCubes, cube_t(numVars, cubeVar_t::A));
 
       
   std::cout << "Vars" << std::endl;
@@ -163,14 +163,26 @@ int main() {
     for (size_t j = 0; j < numVars; ++j) {
       std::cin >> var;
       if (var < 0) {
-        cubes[i][(-var) - 1] = cubeVar_t::Z;
+        cubeList[i][(-var) - 1] = cubeVar_t::Z;
       } else {
-        cubes[i][(var) - 1] = cubeVar_t::O;
+        cubeList[i][(var) - 1] = cubeVar_t::O;
       }
     }
   }
 
-  printCubeList(cubes);
+  #ifdef DEBUG_PRINT
+  std::cout << "Initial cube list after parsing: " << std::endl;
+  printCubeList(cubeList);
+  #endif
+
+
+   #ifdef DEBUG_BREAKPOINT
+  std::raise(SIGTRAP); // or __debugbreak() on MSVC
+  #endif
+
+
+  cubeList_t complimentCubeList = compliment(cubeList);
+  printCubeList(complimentCubeList);
 
 } // main()
 

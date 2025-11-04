@@ -84,3 +84,9 @@ cppstd::vector<int> createVector() {
     // ... populate result ...
     return result;  // No expensive copy!
 }
+
+
+
+#ifdef DEBUG
+  std::raise(SIGTRAP); // or __debugbreak() on MSVC
+#endif
