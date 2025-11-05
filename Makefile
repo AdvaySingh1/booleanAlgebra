@@ -21,7 +21,7 @@ endif
 URPC: URPComplement.cpp
 	$(CXX) $(CXXFLAGS) URPComplement.cpp -o URPComplement
 
-$(PCN_PATH)/part%$(OUT_SUFFIX).pcn: URPC $(PCN_PATH)/part%.pcn
+$(PCN_PATH)/part%$(OUT_SUFFIX).pcn: $(PCN_PATH)/part%.pcn
 	./URPComplement < $(PCN_PATH)/part$*.pcn
 # 	./URPComplement < $(PCN_PATH)/$*.pcn > $@
 

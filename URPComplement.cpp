@@ -20,12 +20,18 @@
   #define BREAKPOINT ((void)0)  // No-op when not debugging
 #endif
 
-// debug macro
+// debug macros
 #ifdef DEBUG_PRINT
-  #define DEBUG(...) std::cout << __VA_ARGS__ << std::endl
+template <class... Args>
+inline void DEBUG(Args&&... args) {
+    (std::cout << ... << args) << '\n';
+}
 #else
-  #define DEBUG(...) ((void)0)
+// compiled out
+template <class... Args>
+inline void DEBUG(Args&&...) {}
 #endif
+
 
 #ifdef DEBUG_PRINT
   #define PRINT_CUBE_LIST(cubeList) printCubeList(cubeList) 
@@ -181,6 +187,9 @@ int main() {
   /* parsing input file */
   std::cout << "Parsing" << std::endl;
   size_t numCubes(0);
+
+
+
   std::cin >> numVars >> numCubes;
   cubeList_t cubeList(numCubes, cube_t(numVars, cubeVar_t::A));
 
@@ -190,7 +199,7 @@ int main() {
   int var(0);
   for (size_t i = 0; i < numCubes; ++i) {
     std::cin >> numVars;
-    std::cout << "list: " << i << " and vars: " << numVars << std::endl;
+    DEBUG("list: ", i, " and vars: ", numVars);
     for (size_t j = 0; j < numVars; ++j) {
       std::cin >> var;
       if (var < 0) {
