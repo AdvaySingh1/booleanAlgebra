@@ -5,6 +5,36 @@
 #include <algorithm>
 
 
+// breakpoint macro
+#ifdef DEBUG_BREAKPOINT
+  #if defined(_MSC_VER)
+    #define BREAKPOINT __debugbreak()
+  #elif defined(__APPLE__)
+    #define BREAKPOINT __builtin_debugtrap()
+  #elif defined(__linux__)
+    #define BREAKPOINT raise(SIGTRAP)
+  #else
+    #define BREAKPOINT raise(SIGTRAP)
+  #endif
+#else
+  #define BREAKPOINT ((void)0)  // No-op when not debugging
+#endif
+
+// debug macro
+#ifdef DEBUG_PRINT
+  #define DEBUG(...) std::cout << __VA_ARGS__ << std::endl
+#else
+  #define DEBUG(...) ((void)0)
+#endif
+
+#ifdef DEBUG_PRINT
+  #define PRINT_CUBE_LIST(cubeList) printCubeList(cubeList) 
+#else
+  #define PRINT_CUBE_LIST(cubeList) ((void)0)
+#endif
+
+
+
 // typedef uint8_t cv_t;
 using cv_t = uint8_t;
 enum class cubeVar_t : cv_t {
@@ -171,15 +201,10 @@ int main() {
     }
   }
 
-  #ifdef DEBUG_PRINT
-  std::cout << "Initial cube list after parsing: " << std::endl;
-  printCubeList(cubeList);
-  #endif
 
-
-   #ifdef DEBUG_BREAKPOINT
-  std::raise(SIGTRAP); // or __debugbreak() on MSVC
-  #endif
+  DEBUG("Initial cube list after parsing: ");
+  PRINT_CUBE_LIST(cubeList);
+  BREAKPOINT;
 
 
   cubeList_t complimentCubeList = compliment(cubeList);
@@ -262,6 +287,7 @@ cubeList_t deMorgan(const cube_t& cube) noexcept {
 
 
 static void andCubes(const cube_t& cube1, cube_t& cube2) {
+  BREAKPOINT;
   // report non-don't care issue
   if (cube1.size() != cube2.size()) {
     throw std::logic_error("Cube sizes for anding don't match");

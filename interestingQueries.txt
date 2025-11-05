@@ -1,0 +1,41 @@
+Tracing Tools Explained
+ptrace - Linux/Unix system call that lets one process control another (read/write memory, registers, intercept signals); this is what debuggers like gdb and lldb use under the hood to attach to processes.
+strace - Linux command-line tool that uses ptrace to intercept and log all system calls a program makes (like open(), read(), write()); shows you how a program interacts with the kernel.
+ltrace - Similar to strace but traces library calls (like malloc(), printf()) instead of system calls; uses dynamic linker hooks or ptrace depending on implementation.
+dtrace - Solaris/macOS/BSD dynamic tracing framework that can trace kernel functions, system calls, user functions with minimal overhead using in-kernel probes; much more powerful and lower overhead than ptrace-based tools.
+ftrace - Linux kernel's internal tracing framework (accessed via /sys/kernel/debug/tracing/); can trace kernel functions, scheduling, interrupts with very low overhead since it's built into the kernel.
+perf - Linux performance profiling tool that uses hardware performance counters and kernel tracepoints; shows where your CPU time is going (sampling profiler) plus can trace events like strace.
+Key difference: ptrace stops the process at every event (slow), while dtrace/ftrace/perf use kernel hooks and buffering (fast).RetryASptrace - Linux/Unix system call that lets one process control another (read/write memory, registers, intercept signals); this is what debuggers like gdb and lldb use under the hood to attach to processes.
+so these registers themselves as a a handler when the other program does certain system calls or something? like the breakpoint ones? and can they insert their own breakpoints into the process? Does the kernel always act as the middle man? couple paras short resHow ptrace Works
+Yes, the kernel is always the middleman. When you call ptrace(PTRACE_ATTACH, pid), the kernel marks that process as "being traced" and sets up a parent-child relationship between debugger and target.
+On breakpoints specifically: The debugger uses ptrace(PTRACE_POKETEXT) to write INT 3 (0xCC byte) directly into the target's memory. When the target hits it, the CPU traps to the kernel, and the kernel sees "oh, this process is being traced" and stops the target process, then sends a signal to the debugger via waitpid(). The debugger wakes up, reads registers with ptrace(PTRACE_GETREGS), shows you the state, waits for you to press continue.
+On system calls: You can use ptrace(PTRACE_SYSCALL) to tell the kernel "stop this process before/after every syscall". The kernel intercepts every syscall entry/exit and pauses the target, notifying the debugger. This is how strace works - it's just doing ptrace(PTRACE_SYSCALL) in a loop and reading the syscall number from registers.
+Key insight: The target process never knows it's being debugged. It just keeps executing until the CPU hits a trap instruction or the kernel intercepts a syscall, then the kernel freezes it and hands control to the debugger. The target is literally stopped - not running at all - while you're inspecting it.
+
+
+
+Clever way to launch the debugger and have the launch command at hand
+alias l='echo "process launch -- < ./ProgrammingAssignment1Files/UnateRecursiveComplement/part1.pcn" >> ~/.lldb/lldb-widehistory \
+        && lldb ./URPComplement'
+
+
+
+Handy lldb commands:
+| Purpose                          | Command                              | Example                   |
+| -------------------------------- | ------------------------------------ | ------------------------- |
+| **Run program**                  | `run`                                | `run arg1 arg2`           |
+| **Set breakpoint**               | `breakpoint set -f <file> -l <line>` | `b main.cpp:42`           |
+| **List breakpoints**             | `breakpoint list`                    | `br list`                 |
+| **Continue execution**           | `continue`                           | `c`                       |
+| **Step into / over / out**       | `step` / `next` / `finish`           | `s` / `n` / `f`           |
+| **Print variable**               | `print <expr>`                       | `p x`, `p myStruct.field` |
+| **Evaluate C++ expression**      | `expr <expr>`                        | `expr vec.size()`         |
+| **Show locals**                  | `frame variable`                     | `fr v`                    |
+| **Show call stack**              | `bt`                                 | —                         |
+| **Switch frame**                 | `frame select <idx>`                 | `f 1`                     |
+| **Inspect memory (hex)**         | `memory read <addr> [size]`          | `mem read 0x7ffee3b2 64`  |
+| **Inspect memory (ASCII)**       | `x/s <addr>`                         | `x/s ptr`                 |
+| **Disassemble current function** | `disassemble`                        | —                         |
+| **Watch a variable**             | `watchpoint set variable <var>`      | `watch set var count`     |
+| **Show registers**               | `register read`                      | —                         |
+| **Quit LLDB**                    | `quit`                               | `q`                       |
