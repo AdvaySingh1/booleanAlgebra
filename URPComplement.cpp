@@ -2,6 +2,7 @@
 #include <vector>
 #include <stdexcept>
 #include <limits>
+#include <algorithm>
 
 
 // typedef uint8_t cv_t;
@@ -242,7 +243,7 @@ static void printCubeList(cubeList_t& cubeList) noexcept {
   // make the cnts pos
   std::for_each(unateVarStats.begin(), unateVarStats.end(), 
     [](auto& varStats) -> void {
-      std::get<2>(varStats[2]) = std::abs(std::get<2>(varStats[2]));
+      std::get<3>(varStats) = std::abs(std::get<3>(varStats));
     });
   return std::pair<bool, unateVarStats_t>{allVarsUnate, unateVarStats};
 } // populateVarStats()
@@ -312,23 +313,23 @@ static std::pair<cubeList_t, cubeList_t> cofactor(size_t pos, const cubeList_t& 
 static cubeList_t _cofactor(size_t pos, cubeVar_t cubeVar, const cubeList_t& cubeList) noexcept {
   cubeList_t cofactorCubeList;
   std::for_each(cubeList.begin(), cubeList.end(), 
-    [&cofactorCubeList](const auto& cube) {
+    [&cofactorCubeList, pos, cubeVar](const auto& cube) {
       switch (cube[pos]) {
         case (cubeVar_t::A) :
           cofactorCubeList.push_back(cube);
           break;
         case (cubeVar_t::Z) :
-          if ((cubeVar == cubeVar_t::Z)) {
+          if (cubeVar == cubeVar_t::Z) {
             cofactorCubeList.push_back(cube);
             cofactorCubeList.back()[pos] = cubeVar_t::A;
           }
           break;
         case (cubeVar_t::O) :
-          if ((cubeVar == cubeVar_t::O)) {
+          if (cubeVar == cubeVar_t::O) {
             cofactorCubeList.push_back(cube);
             cofactorCubeList.back()[pos] = cubeVar_t::A;
           }
-        default: break
+        default: break;
       }
   });
   return cofactorCubeList;
@@ -348,7 +349,7 @@ static cubeList_t _cofactor(size_t pos, cubeVar_t cubeVar, const cubeList_t& cub
       minCompDiffIndex = 0;
     bool singleMax = true;
     std::for_each(unateVarStats.cbegin(), unateVarStats.cend(), 
-    [&maxBinateCnt, &i](const auto& uvs){
+      [&](const auto& uvs){
       const bool isUnate = std::get<0>(uvs);
       const cubeVar_t cubeVar = std::get<1>(uvs);
       const size_t binateCnt = std::get<2>(uvs);
@@ -381,7 +382,7 @@ static cubeList_t _cofactor(size_t pos, cubeVar_t cubeVar, const cubeList_t& cub
   else {
     size_t maxAppearsCnt = 0, maxAppearsIndex = 0;
     std::for_each(unateVarStats.cbegin(), unateVarStats.cend(), 
-    [&maxAppearsCnt, &i](const auto& uvs){
+    [&maxAppearsCnt, &maxAppearsIndex, &i](const auto& uvs){
       const size_t binateCnt = std::get<2>(uvs);
       if (binateCnt > maxAppearsCnt) {
         maxAppearsIndex = i;
@@ -391,6 +392,7 @@ static cubeList_t _cofactor(size_t pos, cubeVar_t cubeVar, const cubeList_t& cub
     });
     cofactorIndex = maxAppearsIndex;
   }
+  return cofactorIndex;
 } // selectCofactorIndex()
 
 [[nodiscard]] cubeList_t compliment(const cubeList_t& cubeList) {
