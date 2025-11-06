@@ -190,9 +190,10 @@ int main() {
 
   int var(0);
   for (size_t i = 0; i < numCubes; ++i) {
-    std::cin >> numVars;
-    DEBUG("list: ", i, " and vars: ", numVars);
-    for (size_t j = 0; j < numVars; ++j) {
+    size_t numTmpVars(0);
+    std::cin >> numTmpVars;
+    DEBUG("list: ", i, " and vars: ", numTmpVars);
+    for (size_t j = 0; j < numTmpVars; ++j) {
       std::cin >> var;
       if (var < 0) {
         cubeList[i][(-var) - 1] = cubeVar_t::Z;
@@ -313,10 +314,10 @@ static void andCubeListAndCube(size_t pos, cubeVar_t cubeVar, cubeList_t& cubeLi
   if (cubeList.empty()) {
     throw std::logic_error("Calling varCubeListAnd() with empty cube");
   }
-  cube_t varPCN(numVars, cubeVar_t::A);
-  varPCN[pos] = cubeVar;
+  cube_t varCube(numVars, cubeVar_t::A);
+  varCube[pos] = cubeVar;
   for (auto& cube: cubeList) {
-    andCubes(varPCN, cube);
+    andCubes(varCube, cube);
   }
 } // andCubeListAndCube()
 
