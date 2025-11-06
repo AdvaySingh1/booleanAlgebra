@@ -3,6 +3,8 @@
 #include <stdexcept>
 #include <limits>
 #include <algorithm>
+#include <string>
+
 
 
 // breakpoint macro
@@ -176,6 +178,14 @@ static std::pair<cubeList_t, cubeList_t> cofactor(size_t pos, const cubeList_t& 
 [[nodiscard]] cubeList_t compliment(const cubeList_t& cubeList);
 
 
+/**
+ * @brief Print the cube list for the final grading
+ * 
+ * @param cubeList 
+ */
+void printOutputCubeList(const cubeList_t& cubeList) noexcept;
+
+
 
 
 int main() {
@@ -215,6 +225,8 @@ int main() {
   DEBUG("-----RESULTING CUBE-----");
   PRINT_CUBE_LIST(complimentCubeList);
 
+  printOutputCubeList(complimentCubeList);
+
 } // main()
 
 
@@ -245,7 +257,8 @@ static void printCubeList(cubeList_t& cubeList) noexcept {
 
 [[nodiscard]] static std::pair<bool, unateVarStats_t> populateVarStats(const cubeList_t& cubeList) {
   if (cubeList.empty()) {
-    throw std::logic_error("Called populateVarStats() with empty cubeList");
+    BREAKPOINT;
+    // throw std::logic_error("Called populateVarStats() with empty cubeList");
   }
   bool allVarsUnate = true;
   unateVarStats_t unateVarStats(numVars, {true, cubeVar_t::A, 0, 0});
@@ -312,7 +325,8 @@ static void andCubes(const cube_t& cube1, cube_t& cube2) {
 
 static void andCubeListAndCube(size_t pos, cubeVar_t cubeVar, cubeList_t& cubeList) {
   if (cubeList.empty()) {
-    throw std::logic_error("Calling varCubeListAnd() with empty cube");
+    BREAKPOINT;
+    // throw std::logic_error("Calling varCubeListAnd() with empty cube");
   }
   cube_t varCube(numVars, cubeVar_t::A);
   varCube[pos] = cubeVar;
@@ -470,3 +484,28 @@ static cubeList_t _cofactor(size_t pos, cubeVar_t cubeVar, const cubeList_t& cub
 
   return posCofactor;
 } // compliment()
+
+void printOutputCubeList(const cubeList_t& cubeList) noexcept {
+  // can throw excepions in the case of overflow
+  std::cout << numVars << std::endl;
+  std::cout << cubeList.size() << std::endl;
+  std::for_each(cubeList.cbegin(), cubeList.cend(),
+    [](const cube_t& cube) {
+      int numTmpVars(0);
+      std::string lineStr("");
+      for (int i = 0; i < cube.size(); ++i) {
+        switch (cube[i]) {
+          case cubeVar_t::O : 
+            ++numTmpVars;
+            lineStr += " " + std::to_string(i + 1);
+            break;
+          case cubeVar_t::Z : 
+            ++numTmpVars;
+            lineStr += " " + std::to_string(-(i + 1));
+            break;
+          default : break;
+        }
+      }
+      std::cout << numTmpVars << lineStr << std::endl;
+    });
+} // printOutputCubeList()
