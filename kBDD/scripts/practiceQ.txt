@@ -1,0 +1,25 @@
+# input vars
+boolean v w x y z
+# left side tree
+eval w1 (!w & !x & y & !z)
+eval w2 (w & z)
+eval w3 (v & !w & y)
+eval f (w1 + w2 + w3)
+# right side tree
+eval w4 (!w + !y + z)
+eval w5 (!w + y + z)
+eval w6 (v + w + y)
+eval w7 (w + x + y)
+eval w8 (!v + w + x + !y + !z)
+eval w9 (v + w + !y + !z)
+eval g (w4 & w5 & w6 & w7 & w8 & w9)
+# see if they are equivalent
+verify f g
+# see what inputs satisfy their difference
+eval diff f ^ g
+satisfy diff
+# see what inputs satisfy them begin the same
+eval xnor !(f ^ g)
+satisfy xnor
+
+
