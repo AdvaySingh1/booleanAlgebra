@@ -64,11 +64,6 @@ size_t numVars = 0; // TODO replace the throws in other functions when this was 
  */
 static void printCubeList(cubeList_t& cubes) noexcept;
 
-// void URPCompl(cube_t& cubes) {
-//   complement(cubes, 0, cubes.size());
-// }
-
-
 
 /**
  * @brief Populates the unate stats for each of the vars
@@ -185,16 +180,13 @@ static std::pair<cubeList_t, cubeList_t> cofactor(size_t pos, const cubeList_t& 
 
 int main() {
   /* parsing input file */
-  DEBUG("Parsing");
+  DEBUG("-----PARSING-----");
   size_t numCubes(0);
 
 
 
   std::cin >> numVars >> numCubes;
   cubeList_t cubeList(numCubes, cube_t(numVars, cubeVar_t::A));
-
-      
-  std::cout << "Vars" << std::endl;
 
   int var(0);
   for (size_t i = 0; i < numCubes; ++i) {
@@ -213,11 +205,14 @@ int main() {
 
   DEBUG("Initial cube list after parsing: ");
   PRINT_CUBE_LIST(cubeList);
+
+  DEBUG("\n\n");
   BREAKPOINT;
 
 
   cubeList_t complimentCubeList = compliment(cubeList);
-  printCubeList(complimentCubeList);
+  DEBUG("-----RESULTING CUBE-----");
+  PRINT_CUBE_LIST(complimentCubeList);
 
 } // main()
 
@@ -450,16 +445,27 @@ static cubeList_t _cofactor(size_t pos, cubeVar_t cubeVar, const cubeList_t& cub
   }
 
   // -- Need to recurse further
+  BREAKPOINT;
 
   /* Selection Crieteria */
   size_t cofactorIndex = selectCofactorIndex(populateVarStats(cubeList));
   
+  BREAKPOINT;
 
   /* Perform recursion and return */
   auto [negCofactor, posCofactor] = cofactor(cofactorIndex, cubeList);
+
+  negCofactor = compliment(negCofactor);
+  posCofactor = compliment(posCofactor);
+
+  BREAKPOINT;
+
   andCubeListAndCube(cofactorIndex, cubeVar_t::Z, negCofactor);
   andCubeListAndCube(cofactorIndex, cubeVar_t::O, posCofactor);
   // concatenate neg after pos
   orCubeLists(posCofactor, negCofactor);
+
+  BREAKPOINT;
+
   return posCofactor;
 } // compliment()
