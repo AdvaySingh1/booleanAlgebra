@@ -22,7 +22,7 @@ URPC: URPComplement.cpp
 	$(CXX) $(CXXFLAGS) URPComplement.cpp -o URPComplement
 
 $(PCN_PATH)/part%$(OUT_SUFFIX).pcn: $(PCN_PATH)/part%.pcn
-	./URPComplement < $(PCN_PATH)/part$*.pcn
+	./URPComplement < $(PCN_PATH)/part$*.pcn > $@
 # 	./URPComplement < $(PCN_PATH)/$*.pcn > $@
 
 %: $(PCN_PATH)/part%$(OUT_SUFFIX).pcn
@@ -32,3 +32,4 @@ clean:
 	@rm -rf URPComplement
 
 .PHONEY: clean
+.PRECIOUS: $(PCN_PATH)/part%$(OUT_SUFFIX).pcn
