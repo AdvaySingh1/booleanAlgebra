@@ -185,7 +185,7 @@ static std::pair<cubeList_t, cubeList_t> cofactor(size_t pos, const cubeList_t& 
 
 int main() {
   /* parsing input file */
-  std::cout << "Parsing" << std::endl;
+  DEBUG("Parsing");
   size_t numCubes(0);
 
 
