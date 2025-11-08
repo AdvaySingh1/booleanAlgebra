@@ -1,0 +1,27 @@
+# input variables
+boolean a[3..0] b[3..0] cin d[15..0]
+# 4 bit adder
+adder 4 cout sum[3..0] a[3..0] b[3..0] cin
+# see the bdd for sum bits
+bdd sum0
+size sum0
+size sum1
+size sum2
+size sum3
+size cout
+# create the q1 carry-bypass predictor
+eval q1 a0 ^ b0
+eval q2 a1 ^ b1
+eval q3 a2 ^ b2
+eval q4 a3 ^ b3
+# see the bdd for q bits
+bdd q1
+mux 4 select q1 q2 q3 q4 d[15..0]
+# create the xnor gate
+eval eq !(select ^ cout)
+# quantify away the mux inputs
+quantify u forallEq eq a[3..0] b[3..0] cin
+# determine what values for d satisfy the result
+satisfy forallEq
+# now interpret the results to see what gate this is
+quit

@@ -1,1 +1,14 @@
 help
+
+
+eval q1 a0 ^ b0
+eval q2 a1 ^ b1
+eval q3 a2 ^ b2
+eval q4 a3 ^ b3
+
+# see the bdd for q bits
+bdd q1
+# 16:1 mux output name sel and input d[15..0]
+mux 4 Select q1 q2 q3 q4 d[15..0]
+# see the bdd for Select
+bdd Select
