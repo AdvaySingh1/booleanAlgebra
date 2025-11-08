@@ -5,10 +5,19 @@ eval q1 a0 ^ b0
 eval q2 a1 ^ b1
 eval q3 a2 ^ b2
 eval q4 a3 ^ b3
-
 # see the bdd for q bits
 bdd q1
 # 16:1 mux output name sel and input d[15..0]
 mux 4 Select q1 q2 q3 q4 d[15..0]
 # see the bdd for Select
 bdd Select
+
+
+mux 1 output select cin c4
+# create the xnor gate
+eval eq !(output ^ cout)
+# quantify away the mux inputs
+quantify u forallEq eq a[3..0] b[3..0] cin
+# determine what values for d satisfy the result
+satisfy forallEq
+# now interpret the results to see what gate this is

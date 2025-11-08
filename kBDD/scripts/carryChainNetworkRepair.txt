@@ -17,11 +17,12 @@ eval q4 a3 ^ b3
 # see the bdd for q bits
 bdd q1
 mux 4 select q1 q2 q3 q4 d[15..0]
-# create the xnor gate
-eval eq !(select ^ cout)
-# quantify away the mux inputs
+# Or: select should equal (cin==cout) for optimal bypass
+eval bypass (!(cin ^ cout))
+eval eq !(select ^ bypass)
+
 quantify u forallEq eq a[3..0] b[3..0] cin
-# determine what values for d satisfy the result
 satisfy forallEq
-# now interpret the results to see what gate this is
-quit
+
+
+
