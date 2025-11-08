@@ -1,0 +1,19 @@
+# Programmable Inverter (PRI) for a' + b
+# only need one selector
+boolean a b s1
+# correct function logic
+eval correct (!a + b)
+# programmable inverter logic
+eval pi1 !s1
+eval pi2 s1
+eval w1 !(a & b)
+# w1p stands for w1 after having gone through the pi1
+eval w1p ((pi1 & !w1) + (!pi1 & w1))
+eval w2 (!a + w1p)
+eval w2p ((pi2 & !w2) + (!pi2 & w2))
+# perform the xnor
+eval same !(correct ^ w2p)
+# quantify
+quantify u forallSame same a b
+satisfy forallSame
+# now we know which one to invert based on s2
