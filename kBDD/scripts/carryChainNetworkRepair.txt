@@ -3,20 +3,12 @@ boolean a[3..0] b[3..0] cin d[15..0]
 # 4 bit adder
 adder 4 cout sum[3..0] a[3..0] b[3..0] cin
 # see the bdd for sum bits
-bdd sum0
-size sum0
-size sum1
-size sum2
-size sum3
-size cout
 # create the q1 carry-bypass predictor
 eval q1 a0 ^ b0
 eval q2 a1 ^ b1
 eval q3 a2 ^ b2
 eval q4 a3 ^ b3
-# see the bdd for q bits
-bdd q1
-mux 4 select q1 q2 q3 q4 d[15..0]
+mux 4 select q4 q3 q2 q1 d[15..0]
 # Or: select should equal (cin==cout) for optimal bypass
 eval bypass (!(cin ^ cout))
 eval eq !(select ^ bypass)
