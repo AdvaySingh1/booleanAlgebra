@@ -1,0 +1,55 @@
+# Extracting ODCs in Multi-level logic
+#
+# Primary Inputs a, b, c
+#
+# Y = a' + bc
+# F = abc + Y
+# Z1 = a'b + F
+# Z2 = ab'dF
+#
+# Define normal inputs
+boolean a b c d
+#
+#
+# Define an FVar for an input into Z1 and Z2
+boolean FVar
+#
+#
+# Define the nodes
+eval Y !a + (b & c)
+eval F (a & b & c) + Y
+eval Z1 (!a & b) + FVar
+eval Z2 (a & !b & d & FVar)
+#
+#
+# Define the cofactors of Z1 and Z2 with respect to F
+replace Z1_FPos Z1 FVar 1
+replace Z1_FNeg Z1 FVar 0
+replace Z2_FPos Z2 FVar 1
+replace Z2_FNeg Z2 FVar 0
+#
+#
+# Define the ODCs for Z1 and Z2
+# These are the complement of the difference
+eval ODC_Z1 !(Z1_FPos ^ Z1_FNeg)
+eval ODC_Z2 !(Z2_FPos ^ Z2_FNeg)
+#
+#
+# And them to find ODC_F product
+eval ODC_FProd (ODC_Z1 & ODC_Z2)
+#
+#
+# Quantify away PIs not used in F
+# -> in this case, it's only d
+quantify u ODC_F ODC_FProd d
+#
+#
+# Print the SOP
+sop ODC_F
+
+
+
+
+
+
+
