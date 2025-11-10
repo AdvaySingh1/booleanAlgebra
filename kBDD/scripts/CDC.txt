@@ -1,0 +1,45 @@
+# Extracting CDCs in Multi-level logic
+#
+# Primary Inputs a, b, c
+#
+# X = ab + b'c'
+# Y = a + c
+# F = ac + X'Y
+#
+# Define normal inputs
+boolean a b c
+#
+#
+# Define inputs for xor
+boolean XVar YVar 
+#
+#
+# Define the nodes
+eval XNode (a & b) + (!b & !c)
+eval YNode a + c
+eval F (a & c) + (!XVar & YVar)
+#
+#
+# Define the SDCs for X and Y
+eval SDC_X XVar ^ XNode
+eval SDC_Y YVar ^ YNode
+#
+#
+# Define the SDCs for sum
+eval SDC_sum SDC_X + SDC_Y
+#
+#
+# Quantify away PIs not used in Y
+# -> in this case, it's only b
+quantify u CDC_F SDC_sum b
+#
+#
+# Print the SOP
+sop CDC_F
+
+
+
+
+
+
+
